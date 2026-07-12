@@ -4,9 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0b1020" />
+  <meta name="application-name" content="Ops Center" />
+  <meta name="apple-mobile-web-app-title" content="Ops Center" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/icons/icon-192.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Ops Center — Proyectos</title>
+  <title>Ops Center</title>
   <style>
     :root{
       --bg:#070b14; --panel:#0e1525; --panel-2:#121b2e; --panel-3:#19243a;
@@ -249,6 +257,12 @@
       .about-grid{grid-template-columns:1fr 1fr}
     }
 
+
+    @media (display-mode: standalone){
+      body{padding-top:env(safe-area-inset-top)}
+      .system-strip .sys-badge:after{content:" · instalada"}
+    }
+
     @media(max-width:1000px){
       .projects{grid-template-columns:repeat(2,minmax(0,1fr))}
       .hero{grid-template-columns:1fr}
@@ -293,10 +307,11 @@
     <header class="topbar">
       <div class="brand">
         <div class="logo">OC</div>
-        <div><h1>Ops Center <span class="version-pill">v1.4.3</span></h1><p>Tu centro de operaciones personal · Stable</p></div>
+        <div><h1>Ops Center <span class="version-pill">v1.5.0</span></h1><p>Tu centro de operaciones personal · Stable</p></div>
       </div>
       <div class="top-actions">
         <button class="icon-btn" id="themeBtn" title="Cambiar tema">◐</button>
+        <button class="icon-btn" id="installBtn" title="Instalar Ops Center">⇩</button>
         <button class="icon-btn" id="aboutBtn" title="Información de Ops Center">ⓘ</button>
         <button class="btn desktop-only" id="importBtn">Importar</button>
         <button class="btn desktop-only" id="exportBtn">Exportar</button>
@@ -330,8 +345,8 @@
     <section class="system-strip">
       <div class="sys-left">
         <span class="sys-badge">● Sistema operativo</span>
-        <strong>Ops Center v1.4.3</strong>
-        <span>Build 2026.07.12.143</span>
+        <strong>Ops Center v1.5.0</strong>
+        <span>Build 2026.07.12.150</span>
       </div>
       <div class="sys-right">
         <span id="lastSavedText">Guardado local activo</span>
@@ -370,7 +385,7 @@
       <span id="resultCount">0 proyectos</span>
     </div>
     <main class="projects" id="projects"></main>
-    <footer style="text-align:center;color:var(--muted);font-size:11px;padding:28px 0 8px">Ops Center v1.4.3 · Build 2026.07.12.143 · Stable</footer>
+    <footer style="text-align:center;color:var(--muted);font-size:11px;padding:28px 0 8px">Ops Center v1.5.0 · Build 2026.07.12.150 · Stable</footer>
   </div>
 
   <nav class="bottom-nav">
@@ -518,10 +533,10 @@
         <div class="about-grid">
           <div class="about-card"><span>Versión</span><b>1.4.0</b></div>
           <div class="about-card"><span>Canal</span><b>Stable</b></div>
-          <div class="about-card"><span>Build</span><b>2026.07.12.143</b></div>
+          <div class="about-card"><span>Build</span><b>2026.07.12.150</b></div>
           <div class="about-card"><span>Motor</span><b>HTML · CSS · JS</b></div>
           <div class="about-card"><span>Almacenamiento</span><b>LocalStorage</b></div>
-          <div class="about-card"><span>Plataforma</span><b>Web / PWA Ready</b></div>
+          <div class="about-card"><span>Plataforma</span><b>PWA completa</b></div>
         </div>
 
         <div class="mini-metrics">
@@ -534,12 +549,12 @@
           <h4>Historial de versiones</h4>
           <div class="changelog">
             <div class="change-item">
-              <h5>v1.4.3 · Actual</h5>
+              <h5>v1.5.0 · Actual</h5>
               <ul>
                 <li>Información de versión fija en la aplicación.</li>
                 <li>Panel “Acerca de” con build, estado y métricas.</li>
                 <li>Indicador de salud del sistema.</li>
-                <li>Mejoras visuales y de navegación.</li><li>Campo de URL principal corregido, destacado y optimizado para iPhone.</li><li>Scroll del formulario móvil corregido mediante estructura flex real.</li><li>Formulario móvil con desplazamiento completo y soporte para teclado de iPhone.</li>
+                <li>Mejoras visuales y de navegación.</li><li>Campo de URL principal corregido, destacado y optimizado para iPhone.</li><li>PWA completa con iconos para iPhone, manifest y funcionamiento offline.</li><li>Scroll del formulario móvil corregido mediante estructura flex real.</li><li>Formulario móvil con desplazamiento completo y soporte para teclado de iPhone.</li>
               </ul>
             </div>
             <div class="change-item">
@@ -578,13 +593,57 @@
     </div>
   </section>
 
+
+  <section class="modal" id="installModal">
+    <div class="modal-card" style="max-width:560px">
+      <div class="modal-head">
+        <div>
+          <h3>Instalar Ops Center</h3>
+          <div style="color:var(--muted);font-size:12px;margin-top:4px">Acceso directo con icono personalizado</div>
+        </div>
+        <button class="icon-btn close-install">×</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;align-items:center;gap:16px;padding:16px;border-radius:18px;background:var(--panel-2);border:1px solid var(--line)">
+          <img src="./assets/icons/apple-touch-icon.png" alt="Icono Ops Center" width="72" height="72" style="border-radius:18px;box-shadow:var(--shadow)">
+          <div>
+            <strong style="font-size:19px">Ops Center</strong>
+            <div style="color:var(--muted);font-size:13px;margin-top:4px">Versión 1.5.0 · PWA</div>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>En iPhone</h4>
+          <div class="checklist">
+            <div class="check-item"><span><b>1.</b> Abre esta página en Safari.</span></div>
+            <div class="check-item"><span><b>2.</b> Toca el botón Compartir ⬆️.</span></div>
+            <div class="check-item"><span><b>3.</b> Selecciona “Agregar a inicio”.</span></div>
+            <div class="check-item"><span><b>4.</b> Confirma con “Agregar”.</span></div>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>Incluido</h4>
+          <div class="chips">
+            <span class="chip status status-active">Icono personalizado</span>
+            <span class="chip">Pantalla completa</span>
+            <span class="chip">Modo offline</span>
+            <span class="chip">Nombre propio</span>
+          </div>
+        </div>
+        <p id="installStatus" style="color:var(--muted);font-size:12px;line-height:1.55;margin-top:18px"></p>
+      </div>
+      <div class="modal-foot">
+        <button class="btn primary close-install">Entendido</button>
+      </div>
+    </div>
+  </section>
+
   <input class="sr-only" type="file" id="fileInput" accept=".json,application/json" />
   <div class="toast" id="toast"></div>
 
 <script>
 (() => {
-  const APP_VERSION = "1.4.3";
-  const APP_BUILD = "2026.07.12.143";
+  const APP_VERSION = "1.5.0";
+  const APP_BUILD = "2026.07.12.150";
   const APP_CHANNEL = "Stable";
   const STORAGE_KEY = "ops-center-projects-v2";
   const SETTINGS_KEY = "ops-center-settings-v2";
@@ -1067,6 +1126,55 @@
       setTimeout(()=>e.target.scrollIntoView({block:"center",behavior:"smooth"}),180);
     }
   });
+
+  let deferredInstallPrompt = null;
+
+  window.addEventListener("beforeinstallprompt", event => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    notify("Ops Center instalado");
+  });
+
+  function openInstallHelp(){
+    const standalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+    const status = document.getElementById("installStatus");
+    if(status){
+      status.textContent = standalone
+        ? "Ops Center ya está abierto como aplicación independiente."
+        : (/iphone|ipad|ipod/i.test(navigator.userAgent)
+          ? "En iPhone, usa Safari y selecciona Compartir → Agregar a inicio."
+          : "Puedes instalarla desde tu navegador o seguir las instrucciones mostradas.");
+    }
+    showModal(document.getElementById("installModal"));
+  }
+
+  const installButton = document.getElementById("installBtn");
+  if(installButton){
+    installButton.onclick = async () => {
+      if(deferredInstallPrompt){
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+      }else{
+        openInstallHelp();
+      }
+    };
+  }
+
+  document.querySelectorAll(".close-install").forEach(button => button.onclick = closeModals);
+
+  if("serviceWorker" in navigator){
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js").catch(error => {
+        console.warn("Service worker no registrado:", error);
+      });
+    });
+  }
+
   renderAll();
 })();
 </script>
