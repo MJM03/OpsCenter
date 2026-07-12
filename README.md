@@ -1,22 +1,11 @@
-# Ops Center v1.4.2
+# Ops Center v1.4.3
 
-Centro de operaciones personal para administrar proyectos, URLs, tareas, estados, progreso y respaldos.
+Centro de operaciones personal listo para GitHub Pages.
 
-## Publicación en GitHub Pages
+## Publicación
+1. Sube todos los archivos a la raíz del repositorio.
+2. Activa GitHub Pages desde la rama principal.
+3. Abre el enlace publicado.
 
-1. Sube todos los archivos de esta carpeta a la raíz de tu repositorio.
-2. En GitHub abre **Settings > Pages**.
-3. Selecciona **Deploy from a branch**, rama `main` y carpeta `/root`.
-4. Guarda los cambios.
-
-El archivo principal ya está nombrado como `index.html`.
-
-## Datos
-
-Los proyectos se guardan localmente en el navegador mediante LocalStorage. Usa **Exportar respaldo** antes de cambiar de dispositivo o limpiar el navegador.
-
-## Versión
-
-- Versión: 1.4.2
-- Build: 2026.07.12.142
-- Canal: Stable
+## Corrección principal
+El formulario de creación y edición ahora utiliza una estructura flex completa y puede desplazarse correctamente en iPhone y otros móviles, incluso con el teclado abierto.

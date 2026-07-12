@@ -1,18 +1,11 @@
 # Changelog
 
-## v1.4.2 — 12/07/2026
+## v1.4.3 — 12/07/2026
+- Corregido definitivamente el scroll del formulario de nuevo proyecto.
+- El elemento `form` ahora ocupa el espacio disponible del modal.
+- El contenido central tiene scroll independiente.
+- Cabecera y botones permanecen visibles.
+- Mejor compatibilidad con Safari en iPhone y teclado virtual.
 
-- Corrección del desplazamiento del formulario de proyecto en iPhone.
-- Modal móvil a altura completa usando `dvh` y `visualViewport`.
-- Compatibilidad con el teclado virtual.
-- Barra de acciones inferior fija y respetando el área segura.
-- Desplazamiento automático hacia el campo enfocado.
-
-## v1.4.1
-
-- Campo principal de URL corregido y destacado.
-- URL disponible al crear y editar proyectos.
-
-## v1.4.0
-
-- Panel de versión, build, estado y changelog integrado.
+## v1.4.2
+- Primer ajuste de viewport móvil.
