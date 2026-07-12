@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1020" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Ops Center — Proyectos</title>
+  <style>
+    :root{
+      --bg:#070b14; --panel:#0e1525; --panel-2:#121b2e; --panel-3:#19243a;
+      --text:#f3f6ff; --muted:#94a3bb; --line:rgba(255,255,255,.09);
+      --accent:#7c5cff; --accent-2:#39d0ff; --ok:#27d88b; --warn:#ffb84d;
+      --danger:#ff6174; --shadow:0 18px 50px rgba(0,0,0,.32);
+      --radius:22px; --safe-top:max(16px, env(safe-area-inset-top));
+      --safe-bottom:max(16px, env(safe-area-inset-bottom));
+    }
+    body.light{
+      --bg:#eef3fa; --panel:#ffffff; --panel-2:#f5f8fc; --panel-3:#eaf0f8;
+      --text:#152033; --muted:#64748b; --line:rgba(15,23,42,.11);
+      --shadow:0 18px 45px rgba(35,52,80,.13);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; min-height:100vh; font-family:Inter,ui-sans-serif,system-ui,-apple-system,
+      BlinkMacSystemFont,"Segoe UI",sans-serif; background:
+      radial-gradient(circle at 15% -10%, rgba(124,92,255,.25), transparent 28%),
+      radial-gradient(circle at 95% 0%, rgba(57,208,255,.15), transparent 25%), var(--bg);
+      color:var(--text); overflow-x:hidden;
+    }
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    a{color:inherit}
+    .app{max-width:1480px;margin:auto;padding:var(--safe-top) 18px var(--safe-bottom)}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+      position:sticky;top:0;z-index:20;padding:10px 0 16px;
+      backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:46px;height:46px;border-radius:15px;display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      box-shadow:0 12px 28px rgba(93,95,255,.35);font-weight:900;color:white;
+    }
+    .brand h1{font-size:18px;margin:0;letter-spacing:.2px}
+    .brand p{margin:3px 0 0;color:var(--muted);font-size:12px}
+    .top-actions{display:flex;gap:8px}
+    .icon-btn,.btn{
+      border:1px solid var(--line);background:var(--panel);color:var(--text);
+      border-radius:14px;min-height:42px;padding:0 14px;display:inline-flex;
+      align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow);
+    }
+    .icon-btn{width:42px;padding:0}
+    .btn.primary{background:linear-gradient(135deg,var(--accent),#6551e6);border-color:transparent;color:white}
+    .btn.ghost{background:transparent;box-shadow:none}
+    .btn.danger{color:#fff;background:var(--danger);border-color:transparent}
+    .hero{
+      display:grid;grid-template-columns:1.4fr .6fr;gap:18px;margin-top:8px;
+    }
+    .hero-main,.hero-side,.stat,.toolbar,.project-card,.empty,.drawer,.modal-card{
+      background:linear-gradient(180deg,rgba(255,255,255,.025),transparent),var(--panel);
+      border:1px solid var(--line);box-shadow:var(--shadow);
+    }
+    .hero-main{border-radius:30px;padding:28px;min-height:230px;position:relative;overflow:hidden}
+    .hero-main:after{
+      content:"";position:absolute;width:260px;height:260px;border-radius:50%;
+      right:-80px;top:-100px;background:radial-gradient(circle,rgba(124,92,255,.35),transparent 65%)
+    }
+    .eyebrow{font-size:12px;color:var(--accent-2);font-weight:800;text-transform:uppercase;letter-spacing:1.2px}
+    .hero h2{font-size:clamp(28px,5vw,52px);line-height:1.03;margin:10px 0 14px;max-width:760px}
+    .hero-copy{color:var(--muted);max-width:700px;line-height:1.6;margin:0 0 22px}
+    .hero-cta{display:flex;gap:10px;flex-wrap:wrap}
+    .hero-side{border-radius:30px;padding:22px;display:flex;flex-direction:column;justify-content:space-between}
+    .pulse{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--muted)}
+    .pulse-dot{width:10px;height:10px;background:var(--ok);border-radius:50%;box-shadow:0 0 0 6px rgba(39,216,139,.12)}
+    .focus-title{font-size:24px;font-weight:850;margin:18px 0 8px}
+    .focus-sub{color:var(--muted);font-size:14px;line-height:1.5}
+    .focus-meta{display:flex;justify-content:space-between;align-items:center;margin-top:22px;font-size:12px;color:var(--muted)}
+    .progress{height:9px;background:var(--panel-3);border-radius:999px;overflow:hidden;margin-top:8px}
+    .progress > span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+    .stat{border-radius:20px;padding:18px}
+    .stat .label{color:var(--muted);font-size:12px}
+    .stat .value{font-size:29px;font-weight:900;margin-top:6px}
+    .stat .hint{font-size:11px;color:var(--muted);margin-top:4px}
+    .toolbar{
+      border-radius:20px;padding:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+      position:sticky;top:78px;z-index:15
+    }
+    .search{flex:1;min-width:220px;position:relative}
+    .search input,.select,.input,.textarea{
+      width:100%;border:1px solid var(--line);background:var(--panel-2);color:var(--text);
+      border-radius:14px;outline:none;
+    }
+    .search input,.select,.input{height:44px;padding:0 14px}
+    .search input{padding-left:42px}
+    .search span{position:absolute;left:14px;top:12px;color:var(--muted)}
+    .select{width:auto;min-width:150px}
+    .view-toggle{display:flex;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+    .view-toggle button{height:42px;width:42px;border:0;background:transparent;color:var(--muted)}
+    .view-toggle button.active{background:var(--panel-3);color:var(--text)}
+    .section-head{display:flex;align-items:center;justify-content:space-between;margin:22px 2px 12px}
+    .section-head h3{margin:0;font-size:20px}
+    .section-head span{color:var(--muted);font-size:13px}
+    .projects{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .projects.list{grid-template-columns:1fr}
+    .project-card{border-radius:23px;padding:18px;position:relative;overflow:hidden;transition:.2s transform,.2s border-color}
+    .project-card:hover{transform:translateY(-2px);border-color:rgba(124,92,255,.45)}
+    .project-card.archived{opacity:.65}
+    .card-top{display:flex;justify-content:space-between;gap:12px}
+    .project-icon{
+      width:48px;height:48px;border-radius:15px;display:grid;place-items:center;
+      font-size:22px;background:var(--panel-3);flex:0 0 auto
+    }
+    .card-menu{display:flex;gap:6px}
+    .mini-btn{width:34px;height:34px;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:11px}
+    .mini-btn:hover{background:var(--panel-3);color:var(--text)}
+    .project-card h4{font-size:19px;margin:16px 0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .project-desc{color:var(--muted);font-size:13px;line-height:1.55;min-height:42px}
+    .chips{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}
+    .chip{font-size:11px;padding:6px 9px;border-radius:999px;background:var(--panel-3);color:var(--muted);border:1px solid var(--line)}
+    .chip.status{color:white;border:0}
+    .status-active{background:rgba(39,216,139,.18)!important;color:var(--ok)!important}
+    .status-progress{background:rgba(57,208,255,.16)!important;color:var(--accent-2)!important}
+    .status-paused{background:rgba(255,184,77,.16)!important;color:var(--warn)!important}
+    .status-idea{background:rgba(124,92,255,.18)!important;color:#b6a8ff!important}
+    .status-done{background:rgba(39,216,139,.18)!important;color:var(--ok)!important}
+    .status-archived{background:rgba(148,163,184,.15)!important;color:var(--muted)!important}
+    .card-progress-row{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:8px}
+    .next-action{margin:14px 0;padding:12px;border-radius:14px;background:var(--panel-2);font-size:12px;line-height:1.5}
+    .next-action b{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+    .task-summary{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin:12px 0 0}
+    .card-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+    .link-btn{
+      text-decoration:none;border:1px solid var(--line);border-radius:12px;padding:9px 11px;
+      background:var(--panel-2);font-size:12px;display:inline-flex;gap:7px;align-items:center
+    }
+    .link-btn:hover{border-color:var(--accent)}
+    .project-card.list{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+    .project-card.list .project-desc{min-height:0}
+    .project-card.list .card-links{justify-content:flex-end}
+    .empty{border-radius:22px;padding:52px 20px;text-align:center;color:var(--muted)}
+    .empty .big{font-size:42px;margin-bottom:10px}
+    .bottom-nav{
+      display:none;position:fixed;bottom:0;left:0;right:0;z-index:30;
+      background:rgba(10,15,27,.88);backdrop-filter:blur(18px);border-top:1px solid var(--line);
+      padding:8px 12px calc(8px + env(safe-area-inset-bottom))
+    }
+    .bottom-nav button{flex:1;border:0;background:transparent;color:var(--muted);padding:8px;font-size:11px}
+    .bottom-nav button b{display:block;font-size:19px;margin-bottom:2px;color:var(--text)}
+    .fab{
+      display:none;position:fixed;right:18px;bottom:90px;width:58px;height:58px;border-radius:18px;
+      border:0;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:white;font-size:28px;
+      box-shadow:0 16px 35px rgba(79,101,255,.38);z-index:35
+    }
+    .overlay{position:fixed;inset:0;background:rgba(3,6,12,.68);backdrop-filter:blur(6px);z-index:40;display:none}
+    .overlay.show{display:block}
+    .modal{position:fixed;inset:0;z-index:45;display:none;align-items:center;justify-content:center;padding:18px}
+    .modal.show{display:flex}
+    .modal-card{width:min(760px,100%);max-height:92vh;border-radius:26px;overflow:hidden;display:flex;flex-direction:column}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;padding:19px 20px;border-bottom:1px solid var(--line)}
+    .modal-head h3{margin:0;font-size:19px}
+    .modal-body{padding:20px;overflow:auto}
+    .modal-foot{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+    .field.full{grid-column:1/-1}
+    .field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin:0 0 7px 3px}
+    .textarea{min-height:90px;padding:12px;resize:vertical}
+    .range-wrap{display:grid;grid-template-columns:1fr 52px;gap:10px;align-items:center}
+    input[type="range"]{width:100%}
+    .repeater{display:flex;flex-direction:column;gap:8px}
+    .repeat-row{display:grid;grid-template-columns:1fr 1.4fr 38px;gap:8px}
+    .task-row{display:grid;grid-template-columns:34px 1fr 38px;gap:8px;align-items:center}
+    .task-row input[type="checkbox"]{width:20px;height:20px;accent-color:var(--accent)}
+    .drawer{
+      position:fixed;right:-520px;top:0;bottom:0;width:min(500px,100%);z-index:50;
+      transition:.25s right;border-radius:28px 0 0 28px;display:flex;flex-direction:column
+    }
+    .drawer.show{right:0}
+    .drawer-head{padding:22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}
+    .drawer-body{padding:22px;overflow:auto}
+    .drawer-title{font-size:26px;margin:8px 0}
+    .detail-section{margin-top:24px}
+    .detail-section h4{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+    .checklist{display:flex;flex-direction:column;gap:8px}
+    .check-item{display:flex;gap:10px;align-items:flex-start;background:var(--panel-2);padding:11px;border-radius:13px}
+    .check-item.done span{text-decoration:line-through;color:var(--muted)}
+    .toast{
+      position:fixed;left:50%;bottom:25px;transform:translate(-50%,120px);z-index:80;
+      background:var(--text);color:var(--bg);padding:11px 16px;border-radius:13px;font-weight:700;font-size:13px;
+      transition:.25s;box-shadow:var(--shadow)
+    }
+    .toast.show{transform:translate(-50%,0)}
+    .sr-only{position:absolute;left:-9999px}
+    @media(max-width:1000px){
+      .projects{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .hero{grid-template-columns:1fr}
+      .hero-side{min-height:180px}
+    }
+    @media(max-width:680px){
+      .app{padding-left:12px;padding-right:12px;padding-bottom:105px}
+      .topbar{padding-top:4px}
+      .brand p{display:none}
+      .top-actions .desktop-only{display:none}
+      .hero-main{padding:22px;border-radius:24px}
+      .hero-side{border-radius:24px}
+      .hero h2{font-size:34px}
+      .stats{grid-template-columns:1fr 1fr}
+      .stat{padding:15px}
+      .toolbar{top:69px}
+      .toolbar .select{flex:1;min-width:calc(50% - 7px)}
+      .projects{grid-template-columns:1fr}
+      .project-card.list{display:block}
+      .project-card.list .card-links{justify-content:flex-start}
+      .form-grid{grid-template-columns:1fr}
+      .field.full{grid-column:auto}
+      .repeat-row{grid-template-columns:1fr 1fr 38px}
+      .bottom-nav{display:flex}
+      .fab{display:block}
+      .modal{align-items:flex-end;padding:0}
+      .modal-card{border-radius:24px 24px 0 0;max-height:94vh}
+      .drawer{border-radius:24px 0 0 24px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">OC</div>
+        <div><h1>Ops Center</h1><p>Tu centro de operaciones personal</p></div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="themeBtn" title="Cambiar tema">◐</button>
+        <button class="btn desktop-only" id="importBtn">Importar</button>
+        <button class="btn desktop-only" id="exportBtn">Exportar</button>
+        <button class="btn primary desktop-only" id="newBtn">＋ Proyecto</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-main">
+        <div class="eyebrow">Panel maestro</div>
+        <h2>Todos tus proyectos, avances y enlaces en un solo lugar.</h2>
+        <p class="hero-copy">Organiza cada web o app, registra lo que falta implementar, abre sus enlaces, prioriza tareas y conserva todo localmente en tu dispositivo.</p>
+        <div class="hero-cta">
+          <button class="btn primary" id="heroNewBtn">Crear proyecto</button>
+          <button class="btn" id="showActiveBtn">Ver activos</button>
+        </div>
+      </div>
+      <div class="hero-side">
+        <div>
+          <div class="pulse"><span class="pulse-dot"></span> Sistema operativo</div>
+          <div class="focus-title" id="focusTitle">Sin proyecto prioritario</div>
+          <div class="focus-sub" id="focusNext">Marca un proyecto como favorito para mostrarlo aquí.</div>
+        </div>
+        <div>
+          <div class="focus-meta"><span>Progreso</span><b id="focusProgress">0%</b></div>
+          <div class="progress"><span id="focusBar" style="width:0%"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats" id="stats"></section>
+
+    <section class="toolbar">
+      <div class="search"><span>⌕</span><input id="searchInput" placeholder="Buscar proyecto, tecnología o tarea..." /></div>
+      <select class="select" id="statusFilter">
+        <option value="">Todos los estados</option>
+        <option value="Activo">Activo</option>
+        <option value="En progreso">En progreso</option>
+        <option value="Pausado">Pausado</option>
+        <option value="Idea">Idea</option>
+        <option value="Completado">Completado</option>
+        <option value="Archivado">Archivado</option>
+      </select>
+      <select class="select" id="categoryFilter"><option value="">Todas las categorías</option></select>
+      <select class="select" id="sortSelect">
+        <option value="updated">Actualizados recientemente</option>
+        <option value="priority">Mayor prioridad</option>
+        <option value="progress">Mayor progreso</option>
+        <option value="name">Nombre A–Z</option>
+      </select>
+      <div class="view-toggle">
+        <button id="gridBtn" class="active" title="Cuadrícula">▦</button>
+        <button id="listBtn" title="Lista">☰</button>
+      </div>
+    </section>
+
+    <div class="section-head">
+      <h3>Proyectos</h3>
+      <span id="resultCount">0 proyectos</span>
+    </div>
+    <main class="projects" id="projects"></main>
+  </div>
+
+  <nav class="bottom-nav">
+    <button data-nav="all"><b>⌂</b>Proyectos</button>
+    <button data-nav="active"><b>⚡</b>Activos</button>
+    <button data-nav="favorites"><b>★</b>Favoritos</button>
+    <button id="mobileDataBtn"><b>⇅</b>Datos</button>
+  </nav>
+  <button class="fab" id="fab">＋</button>
+
+  <div class="overlay" id="overlay"></div>
+
+  <section class="modal" id="projectModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="modalTitle">Nuevo proyecto</h3>
+        <button class="icon-btn close-modal">×</button>
+      </div>
+      <form id="projectForm">
+        <div class="modal-body">
+          <input type="hidden" id="projectId" />
+          <div class="form-grid">
+            <div class="field">
+              <label>Nombre</label>
+              <input class="input" id="name" required placeholder="Ej. Inventario INV" />
+            </div>
+            <div class="field">
+              <label>Icono</label>
+              <input class="input" id="icon" maxlength="4" placeholder="📦" />
+            </div>
+            <div class="field full">
+              <label>Descripción</label>
+              <textarea class="textarea" id="description" placeholder="¿Qué hace este proyecto?"></textarea>
+            </div>
+            <div class="field">
+              <label>Categoría</label>
+              <input class="input" id="category" list="categoryList" placeholder="Web, App, Sistema..." />
+              <datalist id="categoryList">
+                <option>Web</option><option>App</option><option>Sistema</option><option>Negocio</option><option>Automatización</option>
+              </datalist>
+            </div>
+            <div class="field">
+              <label>Estado</label>
+              <select class="select" id="status" style="width:100%">
+                <option>Activo</option><option>En progreso</option><option>Pausado</option>
+                <option>Idea</option><option>Completado</option><option>Archivado</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Prioridad</label>
+              <select class="select" id="priority" style="width:100%">
+                <option value="3">Alta</option><option value="2" selected>Media</option><option value="1">Baja</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Progreso</label>
+              <div class="range-wrap">
+                <input id="progressInput" type="range" min="0" max="100" step="5" value="0" />
+                <b id="progressValue">0%</b>
+              </div>
+            </div>
+            <div class="field full">
+              <label>URL principal del proyecto</label>
+              <input class="input" id="projectUrl" type="url" placeholder="https://tu-proyecto.com" />
+            </div>
+            <div class="field full">
+              <label>Tecnologías</label>
+              <input class="input" id="stack" placeholder="HTML, CSS, JavaScript, Apps Script..." />
+            </div>
+            <div class="field full">
+              <label>Próxima acción</label>
+              <input class="input" id="nextAction" placeholder="Ej. Conectar formulario con Google Sheets" />
+            </div>
+            <div class="field full">
+              <label>Notas</label>
+              <textarea class="textarea" id="notes" placeholder="Decisiones, observaciones, credenciales no sensibles, ideas..."></textarea>
+            </div>
+            <div class="field full">
+              <label>Enlaces</label>
+              <div class="repeater" id="linksRepeater"></div>
+              <button type="button" class="btn ghost" id="addLinkBtn">＋ Añadir enlace</button>
+            </div>
+            <div class="field full">
+              <label>Falta implementar / tareas</label>
+              <div class="repeater" id="tasksRepeater"></div>
+              <button type="button" class="btn ghost" id="addTaskBtn">＋ Añadir tarea</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn close-modal">Cancelar</button>
+          <button class="btn primary" type="submit">Guardar proyecto</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <aside class="drawer" id="drawer">
+    <div class="drawer-head">
+      <div><div class="eyebrow">Detalle del proyecto</div><strong id="drawerBadge"></strong></div>
+      <button class="icon-btn" id="closeDrawer">×</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+  </aside>
+
+  <section class="modal" id="dataModal">
+    <div class="modal-card" style="max-width:520px">
+      <div class="modal-head"><h3>Datos y respaldo</h3><button class="icon-btn close-data">×</button></div>
+      <div class="modal-body">
+        <p style="color:var(--muted);line-height:1.6">Los datos se guardan en el navegador de este dispositivo. Exporta un respaldo JSON para moverlos a otro equipo o conservar una copia.</p>
+        <div style="display:grid;gap:10px">
+          <button class="btn primary" id="dataExportBtn">Exportar respaldo</button>
+          <button class="btn" id="dataImportBtn">Importar respaldo</button>
+          <button class="btn danger" id="resetBtn">Restablecer datos de ejemplo</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <input class="sr-only" type="file" id="fileInput" accept=".json,application/json" />
+  <div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const STORAGE_KEY = "ops-center-projects-v1";
+  const SETTINGS_KEY = "ops-center-settings-v1";
+
+  const sampleProjects = [
+    {
+      id: crypto.randomUUID(), name:"Inventario INV", icon:"📦", category:"Sistema",
+      description:"Sistema de inventario y validación móvil con Google Sheets, Apps Script y AppSheet.",
+      status:"En progreso", priority:3, progress:78, favorite:true, archived:false,
+      stack:["Google Sheets","Apps Script","AppSheet"],
+      nextAction:"Finalizar importador PDA y vista de supervisor.",
+      notes:"Mantener flujo móvil, consolidación por SKU y comparación contra base maestra.",
+      projectUrl:"https://script.google.com/",
+      links:[
+        {label:"Abrir sistema",url:"https://script.google.com/"},
+        {label:"AppSheet",url:"https://www.appsheet.com/"}
+      ],
+      tasks:[
+        {text:"Completar importador PDA",done:false},
+        {text:"Añadir dashboard de supervisor",done:false},
+        {text:"Conservar Asignado_A al consolidar",done:true},
+        {text:"Optimizar tarjetas móviles",done:true}
+      ],
+      updatedAt: Date.now()-100000
+    },
+    {
+      id: crypto.randomUUID(), name:"Ciclovías Lima", icon:"🚲", category:"Web",
+      description:"Mapa móvil de ciclovías y rutas para bicicletas y scooters en Lima.",
+      status:"En progreso", priority:3, progress:62, favorite:true, archived:false,
+      stack:["HTML","CSS","JavaScript","Leaflet"],
+      nextAction:"Mejorar carga de ciclovías y cobertura del mapa.",
+      notes:"Las ciclovías deben resaltar por encima del resto de elementos del mapa.",
+      projectUrl:"https://pages.github.com/",
+      links:[{label:"Demo web",url:"https://pages.github.com/"}],
+      tasks:[
+        {text:"Optimizar carga de GeoJSON",done:false},
+        {text:"Agregar más distritos",done:false},
+        {text:"Mejorar contraste de ciclovías",done:true}
+      ],
+      updatedAt: Date.now()-200000
+    },
+    {
+      id: crypto.randomUUID(), name:"Organizador de Pareja", icon:"🏠", category:"Web",
+      description:"Gestión compartida de mercado, gastos fijos, notas y presupuesto mensual.",
+      status:"Activo", priority:3, progress:84, favorite:true, archived:false,
+      stack:["HTML","CSS","JavaScript","LocalStorage"],
+      nextAction:"Pulir edición de notas y gastos; revisar experiencia móvil.",
+      notes:"Incluye sueldo fijo, gastos de mercado y compromisos del mes.",
+      projectUrl:"https://pages.github.com/",
+      links:[{label:"Web publicada",url:"https://pages.github.com/"}],
+      tasks:[
+        {text:"Editar y eliminar notas",done:true},
+        {text:"Editar y eliminar gastos",done:true},
+        {text:"Separar selector de mercado",done:true},
+        {text:"Añadir control de versiones",done:true}
+      ],
+      updatedAt: Date.now()-300000
+    },
+    {
+      id: crypto.randomUUID(), name:"Sistema de Despacho de Vuelo", icon:"✈️", category:"Web",
+      description:"Prototipo móvil de despacho operacional con vuelos, combustible, carga y documentación.",
+      status:"Pausado", priority:2, progress:55, favorite:false, archived:false,
+      stack:["HTML","CSS","JavaScript"],
+      nextAction:"Definir siguientes módulos antes de continuar.",
+      notes:"Proyecto actualmente en stand by.",
+      projectUrl:"",
+      links:[],
+      tasks:[
+        {text:"Agregar persistencia de datos",done:false},
+        {text:"Conectar backend",done:false},
+        {text:"Completar flujo de despacho",done:false}
+      ],
+      updatedAt: Date.now()-400000
+    },
+    {
+      id: crypto.randomUUID(), name:"ERP AGP", icon:"🏢", category:"Sistema",
+      description:"ERP web para clientes, cotizaciones y operación interna, adaptado a móvil.",
+      status:"En progreso", priority:3, progress:72, favorite:false, archived:false,
+      stack:["Apps Script","HTML","CSS","JavaScript","Google Sheets"],
+      nextAction:"Completar installer y estabilizar creación de cotizaciones.",
+      notes:"Resolver errores de datos nulos y mantener compatibilidad móvil.",
+      projectUrl:"https://script.google.com/",
+      links:[{label:"Apps Script",url:"https://script.google.com/"}],
+      tasks:[
+        {text:"Corregir ID_COTIZACION nulo",done:false},
+        {text:"Finalizar installer",done:false},
+        {text:"Ajustar acceso con correo personal",done:true},
+        {text:"Adaptar interfaz a celular",done:true}
+      ],
+      updatedAt: Date.now()-500000
+    },
+    {
+      id: crypto.randomUUID(), name:"Negocio de Landing Pages", icon:"🧩", category:"Negocio",
+      description:"Sistema comercial para vender landing pages con plantillas, procesos y publicación.",
+      status:"Idea", priority:2, progress:28, favorite:false, archived:false,
+      stack:["HTML","CSS","JavaScript","GitHub Pages"],
+      nextAction:"Crear catálogo inicial de plantillas y flujo de ventas.",
+      notes:"Preparar maquetas base por rubro y proceso de personalización rápida.",
+      projectUrl:"https://pages.github.com/",
+      links:[{label:"GitHub Pages",url:"https://pages.github.com/"}],
+      tasks:[
+        {text:"Definir paquetes y precios",done:false},
+        {text:"Crear 3 plantillas base",done:false},
+        {text:"Preparar portafolio",done:false},
+        {text:"Definir captación en redes",done:false}
+      ],
+      updatedAt: Date.now()-600000
+    },
+    {
+      id: crypto.randomUUID(), name:"IA Propia para Apps", icon:"🤖", category:"Automatización",
+      description:"Base de IA para integrar en webs, aplicaciones, Google Sheets y WhatsApp.",
+      status:"Idea", priority:2, progress:15, favorite:false, archived:false,
+      stack:["JavaScript","APIs","Apps Script"],
+      nextAction:"Definir primer caso de uso y arquitectura mínima.",
+      notes:"Empezar por detección de productos cruzados en inventario.",
+      projectUrl:"",
+      links:[],
+      tasks:[
+        {text:"Elegir modelo o proveedor",done:false},
+        {text:"Diseñar API intermedia",done:false},
+        {text:"Crear prueba en Google Sheets",done:false}
+      ],
+      updatedAt: Date.now()-700000
+    }
+  ];
+
+  let projects = loadProjects();
+  let viewMode = loadSettings().viewMode || "grid";
+  let navFilter = "all";
+
+  const $ = s => document.querySelector(s);
+  const $$ = s => [...document.querySelectorAll(s)];
+  const els = {
+    projects:$("#projects"), stats:$("#stats"), resultCount:$("#resultCount"),
+    search:$("#searchInput"), status:$("#statusFilter"), category:$("#categoryFilter"),
+    sort:$("#sortSelect"), overlay:$("#overlay"), modal:$("#projectModal"),
+    form:$("#projectForm"), links:$("#linksRepeater"), tasks:$("#tasksRepeater"),
+    drawer:$("#drawer"), drawerBody:$("#drawerBody"), toast:$("#toast"),
+    dataModal:$("#dataModal"), fileInput:$("#fileInput")
+  };
+
+  function loadProjects(){
+    try{
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      return Array.isArray(saved) && saved.length ? saved : structuredClone(sampleProjects);
+    }catch{return structuredClone(sampleProjects)}
+  }
+  function saveProjects(){
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(projects));
+    renderAll();
+  }
+  function loadSettings(){
+    try{return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}}catch{return{}}
+  }
+  function saveSettings(partial){
+    const next={...loadSettings(),...partial};
+    localStorage.setItem(SETTINGS_KEY,JSON.stringify(next));
+  }
+  function escapeHTML(v=""){
+    return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));
+  }
+  function safeUrl(url){
+    try{
+      const u=new URL(url);
+      return ["http:","https:"].includes(u.protocol) ? u.href : "#";
+    }catch{return "#"}
+  }
+  function statusClass(status){
+    return {
+      "Activo":"status-active","En progreso":"status-progress","Pausado":"status-paused",
+      "Idea":"status-idea","Completado":"status-done","Archivado":"status-archived"
+    }[status] || "status-idea";
+  }
+  function priorityLabel(p){return p==3?"Alta":p==2?"Media":"Baja"}
+  function formatDate(ts){
+    return new Intl.DateTimeFormat("es-PE",{day:"2-digit",month:"short",year:"numeric"}).format(new Date(ts));
+  }
+  function notify(msg){
+    els.toast.textContent=msg;els.toast.classList.add("show");
+    clearTimeout(notify.t);notify.t=setTimeout(()=>els.toast.classList.remove("show"),2200);
+  }
+  function renderAll(){
+    renderCategories();renderStats();renderProjects();renderFocus();
+  }
+  function renderCategories(){
+    const current=els.category.value;
+    const categories=[...new Set(projects.map(p=>p.category).filter(Boolean))].sort();
+    els.category.innerHTML='<option value="">Todas las categorías</option>'+categories.map(c=>`<option>${escapeHTML(c)}</option>`).join("");
+    els.category.value=categories.includes(current)?current:"";
+  }
+  function renderStats(){
+    const visible=projects.filter(p=>p.status!=="Archivado");
+    const active=visible.filter(p=>["Activo","En progreso"].includes(p.status)).length;
+    const pending=visible.reduce((n,p)=>n+(p.tasks||[]).filter(t=>!t.done).length,0);
+    const avg=visible.length?Math.round(visible.reduce((n,p)=>n+(+p.progress||0),0)/visible.length):0;
+    const links=visible.reduce((n,p)=>n+(p.links||[]).length,0);
+    els.stats.innerHTML=[
+      ["Proyectos activos",active,"En ejecución ahora"],
+      ["Tareas pendientes",pending,"Por implementar"],
+      ["Progreso promedio",avg+"%","De proyectos visibles"],
+      ["Enlaces guardados",links,"Accesos directos"]
+    ].map(([l,v,h])=>`<div class="stat"><div class="label">${l}</div><div class="value">${v}</div><div class="hint">${h}</div></div>`).join("");
+  }
+  function getFiltered(){
+    const q=els.search.value.trim().toLowerCase();
+    let list=projects.filter(p=>{
+      const navOk=navFilter==="all" || (navFilter==="active"&&["Activo","En progreso"].includes(p.status)) || (navFilter==="favorites"&&p.favorite);
+      const statusOk=!els.status.value||p.status===els.status.value;
+      const catOk=!els.category.value||p.category===els.category.value;
+      const hay=[p.name,p.description,p.category,p.status,p.nextAction,p.notes,p.projectUrl,(p.stack||[]).join(" "),(p.tasks||[]).map(t=>t.text).join(" ")].join(" ").toLowerCase();
+      return navOk&&statusOk&&catOk&&(!q||hay.includes(q));
+    });
+    const sort=els.sort.value;
+    list.sort((a,b)=>{
+      if(sort==="priority") return (b.priority||0)-(a.priority||0)||(b.updatedAt||0)-(a.updatedAt||0);
+      if(sort==="progress") return (b.progress||0)-(a.progress||0);
+      if(sort==="name") return a.name.localeCompare(b.name,"es");
+      return (b.updatedAt||0)-(a.updatedAt||0);
+    });
+    return list;
+  }
+  function renderProjects(){
+    const list=getFiltered();
+    els.projects.className="projects"+(viewMode==="list"?" list":"");
+    els.resultCount.textContent=`${list.length} proyecto${list.length===1?"":"s"}`;
+    if(!list.length){
+      els.projects.innerHTML=`<div class="empty"><div class="big">🗂️</div><b>No hay proyectos para mostrar</b><p>Prueba con otro filtro o crea uno nuevo.</p></div>`;
+      return;
+    }
+    els.projects.innerHTML=list.map(p=>{
+      const done=(p.tasks||[]).filter(t=>t.done).length,total=(p.tasks||[]).length;
+      const primaryUrl=p.projectUrl?`<a class="link-btn" href="${safeUrl(p.projectUrl)}" target="_blank" rel="noopener" style="background:linear-gradient(135deg,var(--accent),#6551e6);color:white;border-color:transparent">↗ Abrir proyecto</a>`:"";
+      const links=(p.links||[]).slice(0,3).map(l=>`<a class="link-btn" href="${safeUrl(l.url)}" target="_blank" rel="noopener">↗ ${escapeHTML(l.label||"Abrir")}</a>`).join("");
+      return `<article class="project-card ${viewMode==="list"?"list":""} ${p.status==="Archivado"?"archived":""}" data-id="${p.id}">
+        <div>
+          <div class="card-top">
+            <div class="project-icon">${escapeHTML(p.icon||"📁")}</div>
+            <div class="card-menu">
+              <button class="mini-btn favorite-btn" title="Favorito">${p.favorite?"★":"☆"}</button>
+              <button class="mini-btn edit-btn" title="Editar">✎</button>
+              <button class="mini-btn more-btn" title="Ver detalle">⋯</button>
+            </div>
+          </div>
+          <h4>${escapeHTML(p.name)}</h4>
+          <div class="project-desc">${escapeHTML(p.description||"Sin descripción")}</div>
+          <div class="chips">
+            <span class="chip status ${statusClass(p.status)}">${escapeHTML(p.status)}</span>
+            <span class="chip">${escapeHTML(p.category||"Sin categoría")}</span>
+            <span class="chip">Prioridad ${priorityLabel(p.priority)}</span>
+          </div>
+          <div class="card-progress-row"><span>Progreso</span><b>${p.progress||0}%</b></div>
+          <div class="progress"><span style="width:${p.progress||0}%"></span></div>
+          ${p.nextAction?`<div class="next-action"><b>Próxima acción</b>${escapeHTML(p.nextAction)}</div>`:""}
+          <div class="task-summary"><span>${done}/${total} tareas completadas</span><span>Actualizado ${formatDate(p.updatedAt)}</span></div>
+        </div>
+        <div class="card-links">${primaryUrl}${links || (!primaryUrl?'<span class="chip">Sin enlaces</span>':'')}</div>
+      </article>`;
+    }).join("");
+    bindCards();
+  }
+  function renderFocus(){
+    const p=projects.filter(x=>x.favorite&&x.status!=="Archivado").sort((a,b)=>(b.priority||0)-(a.priority||0)||(b.updatedAt||0)-(a.updatedAt||0))[0];
+    $("#focusTitle").textContent=p?p.name:"Sin proyecto prioritario";
+    $("#focusNext").textContent=p?(p.nextAction||"No hay próxima acción registrada."):"Marca un proyecto como favorito para mostrarlo aquí.";
+    $("#focusProgress").textContent=(p?.progress||0)+"%";
+    $("#focusBar").style.width=(p?.progress||0)+"%";
+  }
+  function bindCards(){
+    $$(".project-card").forEach(card=>{
+      const id=card.dataset.id;
+      card.querySelector(".favorite-btn").onclick=e=>{e.stopPropagation();toggleFavorite(id)};
+      card.querySelector(".edit-btn").onclick=e=>{e.stopPropagation();openEditor(id)};
+      card.querySelector(".more-btn").onclick=e=>{e.stopPropagation();openDrawer(id)};
+      card.onclick=e=>{if(!e.target.closest("a,button"))openDrawer(id)};
+    });
+  }
+  function toggleFavorite(id){
+    const p=projects.find(x=>x.id===id);if(!p)return;
+    p.favorite=!p.favorite;p.updatedAt=Date.now();saveProjects();
+  }
+  function openEditor(id=null){
+    resetForm();
+    $("#modalTitle").textContent=id?"Editar proyecto":"Nuevo proyecto";
+    if(id){
+      const p=projects.find(x=>x.id===id);if(!p)return;
+      $("#projectId").value=p.id;$("#name").value=p.name;$("#icon").value=p.icon||"";
+      $("#description").value=p.description||"";$("#category").value=p.category||"";
+      $("#status").value=p.status||"Activo";$("#priority").value=String(p.priority||2);
+      $("#progressInput").value=p.progress||0;$("#progressValue").textContent=(p.progress||0)+"%";
+      $("#projectUrl").value=p.projectUrl||"";
+      $("#stack").value=(p.stack||[]).join(", ");$("#nextAction").value=p.nextAction||"";
+      $("#notes").value=p.notes||"";
+      (p.links||[]).forEach(l=>addLinkRow(l));
+      (p.tasks||[]).forEach(t=>addTaskRow(t));
+    }else{
+      addLinkRow();addTaskRow();
+    }
+    showModal(els.modal);
+  }
+  function resetForm(){
+    els.form.reset();$("#projectId").value="";$("#progressValue").textContent="0%";
+    els.links.innerHTML="";els.tasks.innerHTML="";
+  }
+  function addLinkRow(data={}){
+    const row=document.createElement("div");row.className="repeat-row";
+    row.innerHTML=`<input class="input link-label" placeholder="Nombre del enlace" value="${escapeHTML(data.label||"")}">
+      <input class="input link-url" type="url" placeholder="https://..." value="${escapeHTML(data.url||"")}">
+      <button type="button" class="mini-btn remove-row">×</button>`;
+    row.querySelector(".remove-row").onclick=()=>row.remove();els.links.appendChild(row);
+  }
+  function addTaskRow(data={}){
+    const row=document.createElement("div");row.className="task-row";
+    row.innerHTML=`<input class="task-done" type="checkbox" ${data.done?"checked":""}>
+      <input class="input task-text" placeholder="Tarea pendiente" value="${escapeHTML(data.text||"")}">
+      <button type="button" class="mini-btn remove-row">×</button>`;
+    row.querySelector(".remove-row").onclick=()=>row.remove();els.tasks.appendChild(row);
+  }
+  function showModal(modal){
+    els.overlay.classList.add("show");modal.classList.add("show");modal.setAttribute("aria-hidden","false");
+  }
+  function closeModals(){
+    els.overlay.classList.remove("show");
+    $$(".modal.show").forEach(m=>m.classList.remove("show"));
+    els.drawer.classList.remove("show");
+  }
+  function openDrawer(id){
+    const p=projects.find(x=>x.id===id);if(!p)return;
+    $("#drawerBadge").textContent=p.status;
+    const done=(p.tasks||[]).filter(t=>t.done).length,total=(p.tasks||[]).length;
+    els.drawerBody.innerHTML=`
+      <div style="font-size:42px">${escapeHTML(p.icon||"📁")}</div>
+      <div class="drawer-title">${escapeHTML(p.name)}</div>
+      <div class="chips"><span class="chip status ${statusClass(p.status)}">${escapeHTML(p.status)}</span><span class="chip">${escapeHTML(p.category)}</span><span class="chip">Prioridad ${priorityLabel(p.priority)}</span></div>
+      <p style="color:var(--muted);line-height:1.65">${escapeHTML(p.description||"Sin descripción")}</p>
+      <div class="card-progress-row"><span>Progreso total</span><b>${p.progress||0}%</b></div>
+      <div class="progress"><span style="width:${p.progress||0}%"></span></div>
+      <div class="detail-section"><h4>Próxima acción</h4><div class="next-action">${escapeHTML(p.nextAction||"Sin próxima acción")}</div></div>
+      <div class="detail-section"><h4>Falta implementar · ${done}/${total}</h4>
+        <div class="checklist">${(p.tasks||[]).map((t,i)=>`<label class="check-item ${t.done?"done":""}"><input type="checkbox" data-task="${i}" ${t.done?"checked":""}><span>${escapeHTML(t.text)}</span></label>`).join("")||'<span style="color:var(--muted)">Sin tareas</span>'}</div>
+      </div>
+      <div class="detail-section"><h4>Acceso al proyecto</h4><div class="card-links">
+        ${p.projectUrl?`<a class="link-btn" href="${safeUrl(p.projectUrl)}" target="_blank" rel="noopener" style="background:linear-gradient(135deg,var(--accent),#6551e6);color:white;border-color:transparent">↗ Abrir proyecto</a>`:'<span style="color:var(--muted)">Sin URL principal</span>'}
+      </div></div>
+      <div class="detail-section"><h4>Enlaces adicionales</h4><div class="card-links">${(p.links||[]).map(l=>`<a class="link-btn" href="${safeUrl(l.url)}" target="_blank" rel="noopener">↗ ${escapeHTML(l.label||"Abrir")}</a>`).join("")||'<span style="color:var(--muted)">Sin enlaces adicionales</span>'}</div></div>
+      <div class="detail-section"><h4>Tecnologías</h4><div class="chips">${(p.stack||[]).map(s=>`<span class="chip">${escapeHTML(s)}</span>`).join("")||'<span style="color:var(--muted)">Sin datos</span>'}</div></div>
+      <div class="detail-section"><h4>Notas</h4><p style="white-space:pre-wrap;color:var(--muted);line-height:1.65">${escapeHTML(p.notes||"Sin notas")}</p></div>
+      <div class="detail-section" style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn primary" id="drawerEdit">Editar</button>
+        <button class="btn" id="drawerArchive">${p.status==="Archivado"?"Reactivar":"Archivar"}</button>
+        <button class="btn danger" id="drawerDelete">Eliminar</button>
+      </div>`;
+    els.drawerBody.querySelectorAll("[data-task]").forEach(cb=>{
+      cb.onchange=()=>{
+        p.tasks[+cb.dataset.task].done=cb.checked;p.updatedAt=Date.now();saveProjects();openDrawer(id);
+      };
+    });
+    $("#drawerEdit").onclick=()=>{closeModals();openEditor(id)};
+    $("#drawerArchive").onclick=()=>{p.status=p.status==="Archivado"?"Activo":"Archivado";p.updatedAt=Date.now();saveProjects();closeModals();notify("Estado actualizado")};
+    $("#drawerDelete").onclick=()=>{if(confirm(`¿Eliminar "${p.name}"?`)){projects=projects.filter(x=>x.id!==id);saveProjects();closeModals();notify("Proyecto eliminado")}};
+    els.overlay.classList.add("show");els.drawer.classList.add("show");
+  }
+  function exportData(){
+    const payload={app:"Ops Center",version:1,exportedAt:new Date().toISOString(),projects};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+    const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+    a.download=`ops-center-backup-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();URL.revokeObjectURL(a.href);notify("Respaldo exportado");
+  }
+  function importData(file){
+    const reader=new FileReader();
+    reader.onload=()=>{
+      try{
+        const data=JSON.parse(reader.result);
+        const incoming=Array.isArray(data)?data:data.projects;
+        if(!Array.isArray(incoming))throw new Error();
+        projects=incoming.map(p=>({...p,projectUrl:p.projectUrl||"",id:p.id||crypto.randomUUID(),updatedAt:p.updatedAt||Date.now()}));
+        saveProjects();closeModals();notify("Respaldo importado");
+      }catch{alert("El archivo no es un respaldo válido de Ops Center.")}
+    };
+    reader.readAsText(file);
+  }
+
+  els.form.onsubmit=e=>{
+    e.preventDefault();
+    const id=$("#projectId").value;
+    const links=$$(".repeat-row",els.links).map(row=>({label:row.querySelector(".link-label").value.trim(),url:row.querySelector(".link-url").value.trim()})).filter(x=>x.label||x.url);
+    const tasks=$$(".task-row",els.tasks).map(row=>({text:row.querySelector(".task-text").value.trim(),done:row.querySelector(".task-done").checked})).filter(x=>x.text);
+    const old=projects.find(p=>p.id===id);
+    const item={
+      id:id||crypto.randomUUID(),name:$("#name").value.trim(),icon:$("#icon").value.trim()||"📁",
+      description:$("#description").value.trim(),category:$("#category").value.trim()||"General",
+      status:$("#status").value,priority:+$("#priority").value,progress:+$("#progressInput").value,
+      favorite:old?.favorite||false,archived:$("#status").value==="Archivado",
+      projectUrl:$("#projectUrl").value.trim(),
+      stack:$("#stack").value.split(",").map(s=>s.trim()).filter(Boolean),
+      nextAction:$("#nextAction").value.trim(),notes:$("#notes").value.trim(),links,tasks,updatedAt:Date.now()
+    };
+    if(old)projects=projects.map(p=>p.id===id?item:p);else projects.unshift(item);
+    saveProjects();closeModals();notify(old?"Proyecto actualizado":"Proyecto creado");
+  };
+
+  $("#progressInput").oninput=e=>$("#progressValue").textContent=e.target.value+"%";
+  $("#addLinkBtn").onclick=()=>addLinkRow();
+  $("#addTaskBtn").onclick=()=>addTaskRow();
+  [$("#newBtn"),$("#heroNewBtn"),$("#fab")].forEach(b=>b.onclick=()=>openEditor());
+  $$(".close-modal").forEach(b=>b.onclick=closeModals);
+  $$(".close-data").forEach(b=>b.onclick=closeModals);
+  $("#closeDrawer").onclick=closeModals;els.overlay.onclick=closeModals;
+  [els.search,els.status,els.category,els.sort].forEach(el=>el.addEventListener(el.tagName==="INPUT"?"input":"change",renderProjects));
+  $("#gridBtn").onclick=()=>{viewMode="grid";saveSettings({viewMode});$("#gridBtn").classList.add("active");$("#listBtn").classList.remove("active");renderProjects()};
+  $("#listBtn").onclick=()=>{viewMode="list";saveSettings({viewMode});$("#listBtn").classList.add("active");$("#gridBtn").classList.remove("active");renderProjects()};
+  $("#showActiveBtn").onclick=()=>{navFilter="active";renderProjects();document.querySelector(".toolbar").scrollIntoView()};
+  $$(".bottom-nav button[data-nav]").forEach(b=>b.onclick=()=>{navFilter=b.dataset.nav;renderProjects();window.scrollTo({top:500,behavior:"smooth"})});
+  $("#themeBtn").onclick=()=>{document.body.classList.toggle("light");saveSettings({light:document.body.classList.contains("light")})};
+  if(loadSettings().light)document.body.classList.add("light");
+  if(viewMode==="list"){$("#listBtn").classList.add("active");$("#gridBtn").classList.remove("active")}
+  [$("#exportBtn"),$("#dataExportBtn")].forEach(b=>b.onclick=exportData);
+  [$("#importBtn"),$("#dataImportBtn")].forEach(b=>b.onclick=()=>els.fileInput.click());
+  els.fileInput.onchange=e=>{if(e.target.files[0])importData(e.target.files[0]);e.target.value=""};
+  $("#mobileDataBtn").onclick=()=>showModal(els.dataModal);
+  $("#resetBtn").onclick=()=>{if(confirm("¿Restablecer los datos de ejemplo? Se reemplazarán tus proyectos actuales.")){projects=structuredClone(sampleProjects);saveProjects();closeModals();notify("Datos restablecidos")}};
+  renderAll();
+})();
+</script>
+</body>
+</html>
